@@ -1,0 +1,18 @@
+vim.opt.number = true               -- Line numbers
+vim.opt.relativenumber = true       -- Relative line numbers
+vim.opt.expandtab = true            -- Use spaces instead of tabs
+vim.opt.shiftwidth = 4              -- Indentation size
+vim.opt.tabstop = 4                 -- Tab size
+vim.opt.smartindent = true          -- Smart indentation
+vim.opt.termguicolors = true        -- True color support
+vim.opt.scrolloff = 8               -- Keep 8 lines visible when scrolling
+vim.opt.splitright = true           -- Vertical splits open to the right
+vim.opt.splitbelow = true           -- Horizontal splits open below
+vim.opt.ignorecase = true           -- Ignore case in searches
+vim.opt.smartcase = true            -- But make it case-sensitive if uppercase used
+vim.opt.updatetime = 100            -- Faster completion
+vim.opt.timeoutlen = 300            -- Faster mapped key resolution
+vim.opt.ttimeoutlen = 10            -- Faster terminal keycode handling
+vim.opt.signcolumn = "yes"          -- Always show signcolumn
+-- disable copilot on startup
+vim.g.copilot_enabled = false
