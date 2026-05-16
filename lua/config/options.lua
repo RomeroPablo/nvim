@@ -14,3 +14,4 @@ vim.opt.updatetime = 100            -- Faster completion
 vim.opt.timeoutlen = 300            -- Faster mapped key resolution
 vim.opt.ttimeoutlen = 10            -- Faster terminal keycode handling
 vim.opt.signcolumn = "yes"          -- Always show signcolumn
+vim.opt.shortmess:append("I")       -- Disable Start Screen
