@@ -1,17 +1,12 @@
 local map = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
 
--- Leader key
+-- Leader Key
 vim.g.mapleader = " "
 
 -- Quick save & quit
 map("n", "<Leader>w", ":w<CR>", opts)
 map("n", "<Leader>q", ":q<CR>", opts)
-
--- Terminal toggle
---map("n", "<Leader>t", ":split | terminal<CR>", opts)
---map("t", "<Esc>", "<C-\\><C-n>", opts)  -- Exit terminal mode with Esc
---map("n", "<Leader><Tab>", "<C-^>", { noremap = true, silent = true})
 
 -- Copy to system clipboard without affecting Vim registers
 vim.keymap.set("v", "<C-c>", '"+y', { noremap = true, silent = true })
@@ -43,7 +38,8 @@ end
 -- Keymap to toggle terminal
 vim.keymap.set("n", "<Leader>t", toggle_terminal, opts)
 
--- Optional: Map <Esc> to exit terminal mode
+-- <Esc> to exit terminal mode
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", opts)
 
+-- <CTRL> + <s> to go Source <--> Header (C/C++)
 vim.keymap.set('n', '<C-s>', '<cmd>LspClangdSwitchSourceHeader<CR>', { noremap = true, silent = true })
