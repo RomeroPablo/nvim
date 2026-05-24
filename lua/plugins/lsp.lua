@@ -38,6 +38,11 @@ return {
 				},
 			})
 
+			vim.lsp.config("cmake", {
+				cmd = { "cmake-language-server" },
+				filetypes = { "cmake" },
+			})
+
 			vim.lsp.config("rust_analyzer", {
 				cmd_env = {
 					RUSTUP_TOOLCHAIN = "stable",
