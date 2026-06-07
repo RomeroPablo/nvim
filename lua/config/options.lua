@@ -15,3 +15,6 @@ vim.opt.timeoutlen = 300            -- Faster mapped key resolution
 vim.opt.ttimeoutlen = 10            -- Faster terminal keycode handling
 vim.opt.signcolumn = "yes"          -- Always show signcolumn
 vim.opt.shortmess:append("I")       -- Disable Start Screen
+vim.opt.textwidth = 100             -- Set Row Text Width
+vim.opt.colorcolumn = "100"         -- Set Row Text Width Marker
+vim.opt.wrap = true                 -- Wrap when past Row Text Width
