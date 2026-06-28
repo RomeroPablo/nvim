@@ -95,8 +95,6 @@ return {
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("user-lsp-attach", { clear = true }),
 				callback = function(event)
-					local function_scope = require("config.function_scope")
-
 					local map = function(keys, command, desc)
 						vim.keymap.set("n", keys, command, {
 							buffer = event.buf,
@@ -132,9 +130,6 @@ return {
 					map("[e", function()
 						diagnostic_jump(-1)
 					end, "Previous error")
-					map("<Leader>cs", function_scope.show_current_function, "Show current function scope")
-					map("[[", function_scope.goto_function_start, "Go to function start")
-					map("]]", function_scope.goto_function_end, "Go to function end")
 					map("<Leader>rn", vim.lsp.buf.rename, "Rename symbol")
 					map("<Leader>ca", vim.lsp.buf.code_action, "Code action")
 					map("<Leader>f", function()
