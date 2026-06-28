@@ -28,14 +28,19 @@ return {
 			})
 
 			vim.lsp.config("clangd", {
-				cmd = {
-					"clangd",
-					"--clang-tidy",
-					"--clang-tidy-checks=*",
-					"--completion-style=detailed",
-					"--header-insertion=iwyu",
-					"--compile-commands-dir=.artifacts",
-				},
+				cmd = function(dispatchers, config)
+					return vim.lsp.rpc.start({
+						"/usr/bin/clangd",
+						"--clang-tidy",
+						"--completion-style=detailed",
+						"--header-insertion=iwyu",
+						"--compile-commands-dir=.artifacts",
+					}, dispatchers, {
+						cwd = config.root_dir or vim.uv.cwd(),
+						env = config.cmd_env,
+						detached = config.detached,
+					})
+				end,
 			})
 
 			vim.lsp.config("cmake", {
@@ -90,10 +95,29 @@ return {
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("user-lsp-attach", { clear = true }),
 				callback = function(event)
+					local function_scope = require("config.function_scope")
+
 					local map = function(keys, command, desc)
 						vim.keymap.set("n", keys, command, {
 							buffer = event.buf,
 							desc = desc,
+						})
+					end
+
+					local diagnostic_jump = function(count)
+						if vim.diagnostic.jump then
+							vim.diagnostic.jump({
+								count = count,
+								severity = vim.diagnostic.severity.ERROR,
+								float = true,
+							})
+							return
+						end
+
+						local jump = count > 0 and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+						jump({
+							severity = vim.diagnostic.severity.ERROR,
+							float = true,
 						})
 					end
 
@@ -102,6 +126,15 @@ return {
 					map("gr", vim.lsp.buf.references, "Go to references")
 					map("gi", vim.lsp.buf.implementation, "Go to implementation")
 					map("K", vim.lsp.buf.hover, "Hover documentation")
+					map("]e", function()
+						diagnostic_jump(1)
+					end, "Next error")
+					map("[e", function()
+						diagnostic_jump(-1)
+					end, "Previous error")
+					map("<Leader>cs", function_scope.show_current_function, "Show current function scope")
+					map("[[", function_scope.goto_function_start, "Go to function start")
+					map("]]", function_scope.goto_function_end, "Go to function end")
 					map("<Leader>rn", vim.lsp.buf.rename, "Rename symbol")
 					map("<Leader>ca", vim.lsp.buf.code_action, "Code action")
 					map("<Leader>f", function()
