@@ -75,6 +75,12 @@ return {
 				},
 			})
 
+			vim.lsp.config("hls", {
+				cmd = { "haskell-language-server-wrapper", "--lsp" },
+				filetypes = { "haskell", "lhaskell", "cabal" },
+			})
+			vim.lsp.enable("hls")
+
 			vim.lsp.config("lua_ls", {
 				settings = {
 					Lua = {
