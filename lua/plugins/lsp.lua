@@ -27,10 +27,15 @@ return {
 				severity_sort = true,
 			})
 
+			local clangd_executable = vim.fn.has("win32") == 1 and vim.fn.exepath("clangd") or "/usr/bin/clangd"
+			if clangd_executable == "" then
+				clangd_executable = "clangd"
+			end
+
 			vim.lsp.config("clangd", {
 				cmd = function(dispatchers, config)
 					return vim.lsp.rpc.start({
-						"/usr/bin/clangd",
+						clangd_executable,
 						"--clang-tidy",
 						"--completion-style=detailed",
 						"--header-insertion=iwyu",
