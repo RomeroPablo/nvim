@@ -33,6 +33,9 @@ return {
 			end
 
 			vim.lsp.config("clangd", {
+				init_options = {
+					fallbackFlags = { "-std=c++23" },
+				},
 				cmd = function(dispatchers, config)
 					return vim.lsp.rpc.start({
 						clangd_executable,
