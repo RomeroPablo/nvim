@@ -32,24 +32,34 @@ return {
 				clangd_executable = "clangd"
 			end
 
-			vim.lsp.config("clangd", {
-				init_options = {
-					fallbackFlags = { "-std=c++23" },
-				},
-				cmd = function(dispatchers, config)
-					return vim.lsp.rpc.start({
-						clangd_executable,
-						"--clang-tidy",
-						"--completion-style=detailed",
-						"--header-insertion=iwyu",
-						"--compile-commands-dir=.artifacts",
-					}, dispatchers, {
-						cwd = config.root_dir or vim.uv.cwd(),
-						env = config.cmd_env,
-						detached = config.detached,
-					})
-				end,
-			})
+			local clangd_cmd = function(dispatchers, config)
+				return vim.lsp.rpc.start({
+					clangd_executable,
+					"--clang-tidy",
+					"--completion-style=detailed",
+					"--header-insertion=iwyu",
+					"--compile-commands-dir=.artifacts",
+				}, dispatchers, {
+					cwd = config.root_dir or vim.uv.cwd(),
+					env = config.cmd_env,
+					detached = config.detached,
+				})
+			end
+
+			local clangd_defaults = vim.deepcopy(vim.lsp.config.clangd or {})
+			local clangd_config = function(filetypes, fallback_flag)
+				local config = vim.deepcopy(clangd_defaults)
+				config.filetypes = filetypes
+				config.cmd = clangd_cmd
+				config.init_options = vim.tbl_deep_extend("force", config.init_options or {}, {
+					fallbackFlags = { fallback_flag },
+				})
+				return config
+			end
+
+			vim.lsp.config("clangd", clangd_config({ "cpp", "objcpp", "cuda" }, "-std=c++23"))
+			vim.lsp.config("clangd_c", clangd_config({ "c", "objc" }, "-std=c23"))
+			vim.lsp.enable("clangd_c")
 
 			vim.lsp.config("cmake", {
 				cmd = { "cmake-language-server" },
