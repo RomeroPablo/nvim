@@ -21,6 +21,19 @@ return {
 		config = function(_, opts)
 			vim.diagnostic.config({
 				virtual_text = true,
+				virtual_lines = false,
+				float = function()
+					local width = vim.api.nvim_win_get_width(0)
+					local max_width = math.min(100, width - 4)
+
+					return {
+						border = "rounded",
+						source = "if_many",
+						max_width = max_width,
+						wrap = true,
+						wrap_at = max_width,
+					}
+				end,
 				signs = true,
 				underline = true,
 				update_in_insert = false,
@@ -156,6 +169,9 @@ return {
 					end, "Previous error")
 					map("<Leader>rn", vim.lsp.buf.rename, "Rename symbol")
 					map("<Leader>ca", vim.lsp.buf.code_action, "Code action")
+					map("<Leader>e", function()
+						vim.diagnostic.open_float(nil, { scope = "line" })
+					end, "Line diagnostics")
 					map("<Leader>f", function()
 						vim.lsp.buf.format({ async = true })
 					end, "Format buffer")
