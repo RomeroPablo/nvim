@@ -70,7 +70,7 @@ return {
 				return config
 			end
 
-			vim.lsp.config("clangd", clangd_config({ "cpp", "objcpp", "cuda" }, "-std=c++23"))
+			vim.lsp.config("clangd", clangd_config({ "cpp", "objcpp", "cuda" }, "-std=c++26"))
 			vim.lsp.config("clangd_c", clangd_config({ "c", "objc" }, "-std=c23"))
 			vim.lsp.enable("clangd_c")
 
