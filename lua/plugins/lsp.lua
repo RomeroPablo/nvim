@@ -113,6 +113,45 @@ return {
             })
             vim.lsp.enable("hls")
 
+            vim.filetype.add({
+                extension = {
+                    slang = "slang",
+                },
+            })
+
+            vim.lsp.config("slangd", {
+                cmd = { "slangd" },
+                filetypes = { "slang" },
+                on_attach = function(client)
+                    local semantic_tokens = client.server_capabilities.semanticTokensProvider
+                    if semantic_tokens and type(semantic_tokens.full) == "table" then
+                        semantic_tokens.full.delta = false
+                    end
+
+                    local request = client.request
+                    client.request = function(self, method, params, handler, bufnr)
+                        if
+                            method ~= "textDocument/semanticTokens/full"
+                            and method ~= "textDocument/semanticTokens/full/delta"
+                            and method ~= "textDocument/semanticTokens/range"
+                        then
+                            return request(self, method, params, handler, bufnr)
+                        end
+
+                        local wrapped_handler = function(err, result, ctx)
+                            if result and not result.data and not result.edits then
+                                result.data = {}
+                            end
+
+                            return handler(err, result, ctx)
+                        end
+
+                        return request(self, method, params, wrapped_handler, bufnr)
+                    end
+                end,
+            })
+            vim.lsp.enable("slangd")
+
             vim.lsp.config("lua_ls", {
                 settings = {
                     Lua = {
