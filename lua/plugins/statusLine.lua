@@ -1,3 +1,7 @@
+local perfanno_status = function()
+	return require("config.perfanno").statusline_parts()
+end
+
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {
@@ -41,6 +45,73 @@ return {
 				},
 			},
 			lualine_x = {
+				{
+					function()
+						local status = perfanno_status()
+						return status and status.event or ""
+					end,
+					cond = function()
+						return perfanno_status() ~= nil
+					end,
+					color = {
+						fg = "#f9e2af",
+						bg = "#313244",
+						gui = "bold",
+					},
+					separator = { left = "", right = "" },
+				},
+				{
+					function()
+						return ""
+					end,
+					cond = function()
+						return perfanno_status() ~= nil
+					end,
+					color = {
+						fg = "#7f849c",
+						bg = "#313244",
+					},
+				},
+				{
+					function()
+						local status = perfanno_status()
+						return status and ("L " .. status.line .. "/" .. status.total) or ""
+					end,
+					cond = function()
+						return perfanno_status() ~= nil
+					end,
+					color = {
+						fg = "#cdd6f4",
+						bg = "#313244",
+					},
+				},
+				{
+					function()
+						return ""
+					end,
+					cond = function()
+						return perfanno_status() ~= nil
+					end,
+					color = {
+						fg = "#7f849c",
+						bg = "#313244",
+					},
+				},
+				{
+					function()
+						local status = perfanno_status()
+						return status and ("F " .. status.func) or ""
+					end,
+					cond = function()
+						return perfanno_status() ~= nil
+					end,
+					color = {
+						fg = "#a6e3a1",
+						bg = "#313244",
+						gui = "bold",
+					},
+					separator = { left = "", right = "" },
+				},
 				{
 					"diagnostics",
 					sources = { "nvim_diagnostic" },
