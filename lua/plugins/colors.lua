@@ -36,6 +36,9 @@ return {
 	require("catppuccin").setup({
 		flavour = "mocha",
 		transparent_background = true,
+		float = {
+			transparent = true,
+		},
 		term_colors = true,
 		color_overrides = {
 			mocha = mocha,

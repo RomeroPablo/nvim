@@ -5,7 +5,18 @@ end
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {
-		"nvim-tree/nvim-web-devicons",
+		{
+			"nvim-tree/nvim-web-devicons",
+			opts = {
+				override_by_extension = {
+					slang = {
+						icon = "∿",
+						color = "#28b8c7",
+						name = "Slang",
+					},
+				},
+			},
+		},
 	},
 	event = "VeryLazy",
 	opts = {
