@@ -43,3 +43,8 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", opts)
 
 -- <CTRL> + <s> to go Source <--> Header (C/C++)
 vim.keymap.set('n', '<C-s>', '<cmd>LspClangdSwitchSourceHeader<CR>', { noremap = true, silent = true })
+
+-- Toggle synchronized assembly view
+vim.keymap.set("n", "<Leader>aa", function()
+  require("config.asm").toggle()
+end, { noremap = true, silent = true, desc = "Toggle assembly view" })
