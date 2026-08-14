@@ -12,6 +12,6 @@ return {
 			},
 		})
 
-		vim.cmd.colorscheme("lackluster")
+		vim.cmd.colorscheme("lackluster-night")
 	end,
 }
