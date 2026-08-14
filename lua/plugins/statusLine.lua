@@ -2,6 +2,19 @@ local perfanno_status = function()
 	return require("config.perfanno").statusline_parts()
 end
 
+local lackluster_status_color = function(fg, gui)
+	return function()
+		local color = require("lackluster").color
+		local theme = require("lualine.themes.lackluster")
+
+		return {
+			fg = color[fg],
+			bg = theme.normal.c.bg,
+			gui = gui,
+		}
+	end
+end
+
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {
@@ -21,6 +34,7 @@ return {
 	event = "VeryLazy",
 	opts = {
 		options = {
+			theme = "lackluster",
 			icons_enabled = true,
 			component_separators = { left = "", right = "" },
 			section_separators = { left = "", right = "" },
@@ -64,11 +78,7 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = {
-						fg = "#f9e2af",
-						bg = "#313244",
-						gui = "bold",
-					},
+					color = lackluster_status_color("yellow", "bold"),
 					separator = { left = "", right = "" },
 				},
 				{
@@ -78,10 +88,7 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = {
-						fg = "#7f849c",
-						bg = "#313244",
-					},
+					color = lackluster_status_color("gray6"),
 				},
 				{
 					function()
@@ -91,10 +98,7 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = {
-						fg = "#cdd6f4",
-						bg = "#313244",
-					},
+					color = lackluster_status_color("luster"),
 				},
 				{
 					function()
@@ -103,10 +107,7 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = {
-						fg = "#7f849c",
-						bg = "#313244",
-					},
+					color = lackluster_status_color("gray6"),
 				},
 				{
 					function()
@@ -116,11 +117,7 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = {
-						fg = "#a6e3a1",
-						bg = "#313244",
-						gui = "bold",
-					},
+					color = lackluster_status_color("green", "bold"),
 					separator = { left = "", right = "" },
 				},
 				{
