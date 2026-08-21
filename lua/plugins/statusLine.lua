@@ -2,19 +2,6 @@ local perfanno_status = function()
 	return require("config.perfanno").statusline_parts()
 end
 
-local lackluster_status_color = function(fg, gui)
-	return function()
-		local color = require("lackluster").color
-		local theme = require("lualine.themes.lackluster")
-
-		return {
-			fg = color[fg],
-			bg = theme.normal.c.bg,
-			gui = gui,
-		}
-	end
-end
-
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = {
@@ -24,7 +11,7 @@ return {
 				override_by_extension = {
 					slang = {
 						icon = "∿",
-						color = "#28b8c7",
+						color = "#b4b4b4",
 						name = "Slang",
 					},
 				},
@@ -34,7 +21,7 @@ return {
 	event = "VeryLazy",
 	opts = {
 		options = {
-			theme = "lackluster",
+			theme = "auto",
 			icons_enabled = true,
 			component_separators = { left = "", right = "" },
 			section_separators = { left = "", right = "" },
@@ -78,7 +65,6 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = lackluster_status_color("yellow", "bold"),
 					separator = { left = "", right = "" },
 				},
 				{
@@ -88,7 +74,6 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = lackluster_status_color("gray6"),
 				},
 				{
 					function()
@@ -98,7 +83,6 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = lackluster_status_color("luster"),
 				},
 				{
 					function()
@@ -107,7 +91,6 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = lackluster_status_color("gray6"),
 				},
 				{
 					function()
@@ -117,7 +100,6 @@ return {
 					cond = function()
 						return perfanno_status() ~= nil
 					end,
-					color = lackluster_status_color("green", "bold"),
 					separator = { left = "", right = "" },
 				},
 				{

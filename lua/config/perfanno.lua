@@ -30,6 +30,78 @@ local function find_perf_data()
 	return nil
 end
 
+local flamegraph_image_extensions = {
+	avif = true,
+	gif = true,
+	jpeg = true,
+	jpg = true,
+	png = true,
+	svg = true,
+	webp = true,
+}
+
+local flamegraph_browser_extensions = {
+	htm = true,
+	html = true,
+}
+
+local function artifact_dirs()
+	local cwd = vim.fn.getcwd()
+	local roots = {
+		cwd,
+		vim.fs.dirname(cwd),
+		vim.fs.root(0, { ".git", "CMakeLists.txt", "Makefile" }),
+	}
+	local dirs = {}
+	local seen = {}
+
+	for _, root in ipairs(roots) do
+		if root then
+			local dir = vim.fs.joinpath(root, ".artifacts")
+			if not seen[dir] then
+				seen[dir] = true
+				table.insert(dirs, dir)
+			end
+		end
+	end
+
+	return dirs
+end
+
+local function flamegraph_extension(path)
+	return path:lower():match("%.([^.]+)$")
+end
+
+local function find_flamegraph(extensions)
+	local matches = {}
+	extensions = extensions or vim.tbl_extend("force", flamegraph_image_extensions, flamegraph_browser_extensions)
+
+	for _, dir in ipairs(artifact_dirs()) do
+		if vim.uv.fs_stat(dir) then
+			vim.list_extend(matches, vim.fs.find(function(name, path)
+				local extension = flamegraph_extension(name)
+				local stat = vim.uv.fs_stat(vim.fs.joinpath(path, name))
+				return name:lower():find("flame", 1, true)
+					and extensions[extension]
+					and stat
+					and stat.type == "file"
+			end, { path = dir, type = "file", limit = math.huge }))
+		end
+	end
+
+	table.sort(matches, function(left, right)
+		local left_stat = vim.uv.fs_stat(left)
+		local right_stat = vim.uv.fs_stat(right)
+		return (left_stat and left_stat.mtime.sec or 0) > (right_stat and right_stat.mtime.sec or 0)
+	end)
+
+	return matches[1]
+end
+
+local function missing_flamegraph_message()
+	return "No flamegraph image or HTML file found in " .. table.concat(artifact_dirs(), ", ")
+end
+
 local function prompt_perf_data()
 	local default_path = candidate_paths()[1]
 	return vim.fn.input("Path to perf.data: ", default_path, "file")
@@ -216,6 +288,47 @@ end
 
 function M.find_perf_data()
 	return find_perf_data()
+end
+
+function M.find_flamegraph()
+	return find_flamegraph()
+end
+
+function M.open_flamegraph()
+	local path = find_flamegraph(flamegraph_image_extensions) or find_flamegraph(flamegraph_browser_extensions)
+	if not path then
+		vim.notify(missing_flamegraph_message(), vim.log.levels.WARN)
+		return
+	end
+
+	local extension = flamegraph_extension(path)
+	if flamegraph_browser_extensions[extension] then
+		vim.notify("HTML flamegraphs require a browser; opening " .. path, vim.log.levels.INFO)
+		vim.ui.open(path)
+		return
+	end
+
+	local ok, lazy = pcall(require, "lazy")
+	if ok then
+		lazy.load({ plugins = { "image.nvim" } })
+	end
+
+	if not pcall(require, "image") then
+		vim.notify("image.nvim is unavailable; cannot preview " .. path, vim.log.levels.ERROR)
+		return
+	end
+
+	vim.cmd.tabedit(vim.fn.fnameescape(path))
+end
+
+function M.open_flamegraph_external()
+	local path = find_flamegraph()
+	if not path then
+		vim.notify(missing_flamegraph_message(), vim.log.levels.WARN)
+		return
+	end
+
+	vim.ui.open(path)
 end
 
 function M.ensure_plugin_loaded(silent)

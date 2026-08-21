@@ -30,7 +30,8 @@ return {
 	keys = {
 		{ "<Leader>plf", "<cmd>PerfLoadFlat<CR>", desc = "Load flat perf data" },
 		{ "<Leader>plg", "<cmd>PerfLoadCallGraph<CR>", desc = "Load perf call graph" },
-		{ "<Leader>plo", "<cmd>PerfLoadFlameGraph<CR>", desc = "Load flame graph data" },
+		{ "<Leader>plo", require("config.perfanno").open_flamegraph, desc = "Open flamegraph in Neovim" },
+		{ "<Leader>plO", require("config.perfanno").open_flamegraph_external, desc = "Open interactive flamegraph" },
 		{ "<Leader>pe", "<cmd>PerfPickEvent<CR>", desc = "Pick perf event" },
 		{ "<Leader>pF", "<cmd>PerfCycleFormat<CR>", desc = "Cycle perf format" },
 		{ "<Leader>pa", "<cmd>PerfAnnotate<CR>", desc = "Annotate perf data" },

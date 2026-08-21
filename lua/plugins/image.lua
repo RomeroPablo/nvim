@@ -1,0 +1,31 @@
+return {
+	"3rd/image.nvim",
+	lazy = true,
+	build = false,
+	opts = {
+		backend = "kitty",
+		processor = "magick_cli",
+		integrations = {
+			markdown = { enabled = false },
+			asciidoc = { enabled = false },
+			neorg = { enabled = false },
+			rst = { enabled = false },
+			typst = { enabled = false },
+			html = { enabled = false },
+			css = { enabled = false },
+		},
+		max_width_window_percentage = 100,
+		max_height_window_percentage = 90,
+		window_overlap_clear_enabled = true,
+		editor_only_render_when_focused = true,
+		hijack_file_patterns = {
+			"*.svg",
+			"*.png",
+			"*.jpg",
+			"*.jpeg",
+			"*.gif",
+			"*.webp",
+			"*.avif",
+		},
+	},
+}
