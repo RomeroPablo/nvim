@@ -1,34 +1,25 @@
-local perfanno_status = function()
-	return require("config.perfanno").statusline_parts()
+local function perf_status()
+	local status = require("config.perfanno").statusline_parts()
+	if not status then
+		return ""
+	end
+
+	return string.format("%s · L %d/%d · F %d", status.event, status.line, status.total, status.func)
 end
 
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = {
-		{
-			"nvim-tree/nvim-web-devicons",
-			opts = {
-				override_by_extension = {
-					slang = {
-						icon = "∿",
-						color = "#b4b4b4",
-						name = "Slang",
-					},
-				},
-			},
-		},
-	},
+	dependencies = { "nvim-tree/nvim-web-devicons" },
 	event = "VeryLazy",
 	opts = {
 		options = {
-			theme = "auto",
+			theme = "oxocarbon",
 			icons_enabled = true,
 			component_separators = { left = "", right = "" },
 			section_separators = { left = "", right = "" },
 			globalstatus = true,
 			disabled_filetypes = {
 				statusline = { "lazy" },
-				winbar = {},
 			},
 		},
 		sections = {
@@ -37,7 +28,6 @@ return {
 				"branch",
 				{
 					"diff",
-					colored = true,
 					symbols = {
 						added = " ",
 						modified = " ",
@@ -57,51 +47,7 @@ return {
 				},
 			},
 			lualine_x = {
-				{
-					function()
-						local status = perfanno_status()
-						return status and status.event or ""
-					end,
-					cond = function()
-						return perfanno_status() ~= nil
-					end,
-					separator = { left = "", right = "" },
-				},
-				{
-					function()
-						return ""
-					end,
-					cond = function()
-						return perfanno_status() ~= nil
-					end,
-				},
-				{
-					function()
-						local status = perfanno_status()
-						return status and ("L " .. status.line .. "/" .. status.total) or ""
-					end,
-					cond = function()
-						return perfanno_status() ~= nil
-					end,
-				},
-				{
-					function()
-						return ""
-					end,
-					cond = function()
-						return perfanno_status() ~= nil
-					end,
-				},
-				{
-					function()
-						local status = perfanno_status()
-						return status and ("F " .. status.func) or ""
-					end,
-					cond = function()
-						return perfanno_status() ~= nil
-					end,
-					separator = { left = "", right = "" },
-				},
+				perf_status,
 				{
 					"diagnostics",
 					sources = { "nvim_diagnostic" },
@@ -121,12 +67,7 @@ return {
 		inactive_sections = {
 			lualine_a = {},
 			lualine_b = {},
-			lualine_c = {
-				{
-					"filename",
-					path = 1,
-				},
-			},
+			lualine_c = { { "filename", path = 1 } },
 			lualine_x = { "location" },
 			lualine_y = {},
 			lualine_z = {},

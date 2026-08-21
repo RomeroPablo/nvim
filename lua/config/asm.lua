@@ -495,14 +495,6 @@ function M.toggle()
 	load_disassembly()
 end
 
-function M.follow()
-	if vim.api.nvim_get_current_buf() == state.bufnr then
-		follow_source_from_asm()
-	else
-		follow_asm_from_source()
-	end
-end
-
 vim.api.nvim_set_hl(0, "AsmViewCurrentLine", { link = "Visual" })
 vim.api.nvim_set_hl(0, "AsmViewSourceLine", { link = "Visual" })
 

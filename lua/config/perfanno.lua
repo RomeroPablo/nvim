@@ -7,7 +7,6 @@ local state = {
 	watchers = {},
 	reload_timer = nil,
 	cursor_cache = nil,
-	last_error = nil,
 }
 
 local function candidate_paths()
@@ -420,22 +419,21 @@ function M.load_callgraph_async(opts)
 			state.load_running = false
 
 			if result.code ~= 0 then
-				state.last_error = result.stderr ~= "" and result.stderr or "perf report failed"
+				local message = result.stderr ~= "" and result.stderr or "perf report failed"
 				set_status("error")
 
 				if not opts.silent then
-					vim.notify(state.last_error, vim.log.levels.ERROR)
+					vim.notify(message, vim.log.levels.ERROR)
 				end
 				return
 			end
 
 			local traces = parse_callgraph_output(result.stdout or "")
 			if vim.tbl_isempty(traces) then
-				state.last_error = "No perf callgraph traces were parsed."
 				set_status("error")
 
 				if not opts.silent then
-					vim.notify(state.last_error, vim.log.levels.WARN)
+					vim.notify("No perf callgraph traces were parsed.", vim.log.levels.WARN)
 				end
 				return
 			end
@@ -452,7 +450,6 @@ function M.load_callgraph_async(opts)
 				end
 			end
 
-			state.last_error = nil
 			set_status("loaded")
 
 			if not opts.silent then
@@ -482,10 +479,35 @@ function M.toggle_annotations()
 	redraw_statusline()
 end
 
-function M.setup(perfanno, util)
+local function perf_highlights()
+	local colors = {
+		"#1c1d24",
+		"#202431",
+		"#242b3e",
+		"#29334c",
+		"#303b59",
+		"#394466",
+		"#464c73",
+		"#56517e",
+		"#6b5587",
+		"#82588b",
+	}
+	local groups = {}
+
+	for index, color in ipairs(colors) do
+		local name = "PerfAnnoHeat" .. index
+		vim.api.nvim_set_hl(0, name, { bg = color })
+		table.insert(groups, name)
+	end
+
+	vim.api.nvim_set_hl(0, "PerfAnnoVirtualText", { fg = "#be95ff", bold = true })
+	return groups
+end
+
+function M.setup(perfanno)
 	perfanno.setup({
-		line_highlights = util.make_bg_highlights(nil, "#cc3300", 10),
-		vt_highlight = util.make_fg_highlight("#cc3300"),
+		line_highlights = perf_highlights(),
+		vt_highlight = "PerfAnnoVirtualText",
 		formats = {
 			{ percent = true, format = "%.2f%%", minimum = 0.1 },
 			{ percent = false, format = "%d", minimum = 1 },
@@ -525,14 +547,14 @@ function M.setup(perfanno, util)
 	end
 end
 
-function M.statusline()
+function M.statusline_parts()
 	if state.status ~= "loaded" then
-		return ""
+		return nil
 	end
 
 	local callgraph, config, event = current_callgraph()
 	if not callgraph then
-		return ""
+		return nil
 	end
 
 	local bufnr = vim.api.nvim_get_current_buf()
@@ -545,7 +567,7 @@ function M.statusline()
 	}, ":")
 
 	if state.cursor_cache and state.cursor_cache.key == cache_key then
-		return state.cursor_cache.text
+		return state.cursor_cache.parts
 	end
 
 	local file = buffer_file(bufnr)
@@ -563,39 +585,19 @@ function M.statusline()
 		end
 	end
 
-	local text = string.format(
-		"%s  Line %d/%d  Function %d",
-		event_label(event),
-		line_count,
-		callgraph.total_count or 0,
-		fn_count
-	)
+	local parts = {
+		event = event_label(event),
+		line = line_count,
+		total = callgraph.total_count or 0,
+		func = fn_count,
+	}
 
 	state.cursor_cache = {
 		key = cache_key,
-		text = text,
+		parts = parts,
 	}
 
-	return text
-end
-
-function M.statusline_parts()
-	local text = M.statusline()
-	if text == "" then
-		return nil
-	end
-
-	local event, line, total, func = text:match("^(.-)  Line (%d+)/(%d+)  Function (%d+)$")
-	if not event then
-		return nil
-	end
-
-	return {
-		event = event,
-		line = line,
-		total = total,
-		func = func,
-	}
+	return parts
 end
 
 return M

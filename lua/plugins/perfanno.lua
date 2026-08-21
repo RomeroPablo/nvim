@@ -45,9 +45,8 @@ return {
 	},
 	config = function()
 		local perfanno = require("perfanno")
-		local util = require("perfanno.util")
 
-		require("config.perfanno").setup(perfanno, util)
+		require("config.perfanno").setup(perfanno)
 
 		local has_telescope, telescope = pcall(require, "telescope")
 		if has_telescope then
