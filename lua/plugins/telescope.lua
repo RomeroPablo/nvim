@@ -26,11 +26,6 @@ return {
 			find_files = {
 				hidden = false,
 			},
-			live_grep = {
-				additional_args = function()
-					return { "--hidden" }
-				end,
-			},
 		},
 	},
 }
