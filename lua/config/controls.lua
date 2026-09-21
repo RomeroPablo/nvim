@@ -9,7 +9,6 @@ end
 
 map("n", "<Leader>w", "<cmd>write<CR>", "Write buffer")
 map("n", "<Leader>q", "<cmd>quit<CR>", "Quit window")
-map("n", "<C-]>", "%", "Jump to matching pair")
 
 -- Use the system clipboard without changing unnamed registers.
 map("v", "<C-c>", '"+y', "Copy to system clipboard")
