@@ -38,6 +38,8 @@ local function apply_adjustments()
 		TelescopePromptPrefix = { fg = oxocarbon.base08, bg = oxocarbon.base02 },
 		TelescopeResultsNormal = { fg = oxocarbon.base04, bg = oxocarbon.base01 },
 		TelescopePreviewNormal = { fg = oxocarbon.base04, bg = oxocarbon.base01 },
+		TelescopePreviewLine = { fg = oxocarbon.base01, bg = oxocarbon.base08, bold = true },
+		TelescopePreviewMatch = { fg = oxocarbon.base01, bg = oxocarbon.base08, bold = true },
 		TelescopeSelection = { bg = oxocarbon.base02 },
 		TelescopeMatching = { fg = oxocarbon.base08, bold = true, italic = true },
 
