@@ -37,3 +37,6 @@ map("n", "<C-s>", "<cmd>LspClangdSwitchSourceHeader<CR>", "Switch source/header"
 map("n", "<Leader>aa", function()
 	require("config.asm").toggle()
 end, "Toggle assembly view")
+
+require("config.asciiflow").setup()
+map("n", "<Leader>af", "<cmd>AsciiFlow<CR>", "Toggle ASCII drawing canvas")
